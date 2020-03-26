@@ -4,6 +4,10 @@ services:
   web:
     environment:
       - RAILS_ENV=development
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_NAME=simple_board_development
     build:
       context: .
       dockerfile: Dockerfile-develop
