@@ -8,7 +8,8 @@ gem 'rails', '~> 5.2.4'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 # Use Puma as the app server
-gem 'puma', '~> 3.11'
+# gem 'puma', '~> 3.11' # セキュリティの警告が出たので3.12.4以降にアプデ
+gem 'puma', '>= 3.12.4'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -63,3 +64,9 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Precompile時にDBが必要で、そのモックとなるアダプタ
 gem 'activerecord-nulldb-adapter'
+
+# GitHubでセキュリティの警告が出たのでアプデ。
+# 他のライブラリ(capybara)に依存?して勝手に入れられるやつみたいなので、
+# もともとどこのも記述されていなかったライブラリ
+gem 'nokogiri', '>= 1.10.8'
+gem 'rack', '>= 2.0.8'
