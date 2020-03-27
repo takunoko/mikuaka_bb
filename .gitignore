@@ -4,3 +4,7 @@
 # VIM: Swap-files
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]
+
+# 環境変数ファイル
+Production.env
+Develop.env

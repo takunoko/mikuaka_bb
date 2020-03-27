@@ -2,11 +2,22 @@
 # alpineにする際にはパッケージのインスコとかで色々変更が必要なので注意！
 FROM ruby:2.5.3
 
-# 必要なパッケージのインストール（基本的に必要になってくるものだと思うので削らないこと）
+# 必要なパッケージのインストール
+# apt-transport-httpsはyarnを入れるのにhttpsのアクセスをおこなうために必要
 RUN apt-get update -qq && \
     apt-get install -y build-essential \ 
                        libpq-dev \        
-                       nodejs           
+                       apt-transport-https
+
+# nodeはバージョンを指定して入れる必要がある。
+# 10.xを使っているのが多かったのでそれで。
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    && apt-get install -y nodejs
+
+# プリコンパイル時に必要なライブラリyarn. npmに変わるものみたい。
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+        && apt-get update && apt-get install -y yarn
 
 # 作業ディレクトリの作成、設定
 RUN mkdir /app
@@ -22,6 +33,10 @@ ADD web/Gemfile.lock $APP_ROOT/Gemfile.lock
 RUN bundle install
 # アプリケーション本体の配置
 ADD web $APP_ROOT
+
+# プリコンパイル。本番環境ではjsとかcssとかの圧縮(?)のためのコンパイルが必要。
+# RUN bundle exec rake assets:clobber RAILS_ENV=production DATABASE_URL=nulldb://localhost
+RUN bundle exec rake assets:precompile RAILS_ENV=production DATABASE_URL=nulldb://localhost
 
 # 本番環境は最後に実行が必要。docker-composeだとcompoes側で実行する。
 CMD ["rails","server","-p","3000","-b","0.0.0.0"]
